@@ -432,6 +432,11 @@
     <sys:String x:Key="Retry">再試行</sys:String>
     <sys:String x:Key="Icon">アイコン</sys:String>
     <sys:String x:Key="Duplicate">複製</sys:String>
+    <sys:String x:Key="Apply">適用</sys:String>
+    <sys:String x:Key="BuiltInIconLibrary">内蔵アイコンライブラリ...</sys:String>
+    <sys:String x:Key="SelectBuiltInIcon">内蔵アイコンを選択</sys:String>
+    <sys:String x:Key="SearchBuiltInIcon">内蔵アイコンを検索</sys:String>
+    <sys:String x:Key="NoBuiltInIconFound">一致するアイコンがありません</sys:String>
     <sys:String x:Key="ChangeIcon">アイコン変更</sys:String>
     <sys:String x:Key="ResetIcon">アイコンリセット</sys:String>
     <sys:String x:Key="Official">公式</sys:String>

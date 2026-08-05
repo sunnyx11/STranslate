@@ -65,6 +65,8 @@
         <Resource Include="Resources\*.ani" />
         <Resource Include="Resources\*.ico" />
         <Resource Include="Resources\*.png" />
+        <Resource Include="Resources\BuiltInServiceIcons\*.ico" />
+        <Resource Include="Resources\BuiltInServiceIcons\*.png" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,0 +1,148 @@
+<ui:ContentDialog
+    x:Class="STranslate.Controls.BuiltInServiceIconDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cnvt="clr-namespace:STranslate.Converters"
+    xmlns:core="clr-namespace:STranslate.Core"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    Title="{DynamicResource SelectBuiltInIcon}"
+    d:DesignHeight="520"
+    d:DesignWidth="720"
+    CloseButtonText="{DynamicResource Cancel}"
+    Closed="OnClosed"
+    DefaultButton="Primary"
+    IsPrimaryButtonEnabled="{Binding SelectedIcon, Converter={cnvt:NullToBoolInverseConverter}}"
+    KeyDown="OnKeyDown"
+    PrimaryButtonStyle="{DynamicResource {x:Static ui:ThemeKeys.AccentButtonStyleKey}}"
+    PrimaryButtonText="{DynamicResource Apply}"
+    mc:Ignorable="d">
+
+    <ui:ContentDialog.Resources>
+        <sys:Double x:Key="ContentDialogMaxWidth">720</sys:Double>
+        <sys:Double x:Key="ContentDialogMaxHeight">540</sys:Double>
+        <sys:Double x:Key="ContentDialogMinWidth">680</sys:Double>
+        <sys:Double x:Key="ContentDialogMinHeight">500</sys:Double>
+    </ui:ContentDialog.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Margin="4,0,4,12">
+            <ui:FontIcon
+                Width="32"
+                HorizontalAlignment="Left"
+                Panel.ZIndex="1"
+                Foreground="{DynamicResource {x:Static ui:ThemeKeys.TextFillColorSecondaryBrushKey}}"
+                Icon="{x:Static ui:FluentSystemIcons.Search_20_Regular}" />
+            <TextBox
+                x:Name="PART_FilterTextBox"
+                Height="34"
+                Padding="32,0,8,0"
+                ui:ControlHelper.PlaceholderText="{DynamicResource SearchBuiltInIcon}"
+                Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <ListBox
+                Background="Transparent"
+                BorderThickness="0"
+                ItemsSource="{Binding Icons}"
+                SelectedItem="{Binding SelectedIcon, Mode=TwoWay}"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ikw:VirtualizingWrapPanel />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <ContentPresenter />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="core:BuiltInServiceIcon">
+                        <Border
+                            x:Name="IconItem"
+                            Width="126"
+                            Height="64"
+                            Margin="4"
+                            Padding="10,0"
+                            Background="{DynamicResource {x:Static ui:ThemeKeys.CardBackgroundFillColorDefaultBrushKey}}"
+                            BorderBrush="{DynamicResource {x:Static ui:ThemeKeys.CardStrokeColorDefaultBrushKey}}"
+                            BorderThickness="1"
+                            CornerRadius="{DynamicResource {x:Static ui:ThemeKeys.ControlCornerRadiusKey}}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Image
+                                    Width="28"
+                                    Height="28"
+                                    Stretch="Uniform"
+                                    Source="{Binding ResourceUri}" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Margin="8,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding DisplayName}"
+                                    TextTrimming="CharacterEllipsis"
+                                    ToolTipService.ToolTip="{Binding DisplayName}" />
+                            </Grid>
+                        </Border>
+                        <DataTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="IconItem" Property="Background" Value="{DynamicResource {x:Static ui:ThemeKeys.SubtleFillColorSecondaryBrushKey}}" />
+                            </Trigger>
+                            <DataTrigger Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                <Setter TargetName="IconItem" Property="Background" Value="{DynamicResource {x:Static ui:ThemeKeys.SubtleFillColorTertiaryBrushKey}}" />
+                                <Setter TargetName="IconItem" Property="BorderBrush" Value="{DynamicResource SystemControlForegroundAccentBrush}" />
+                                <Setter TargetName="IconItem" Property="BorderThickness" Value="2" />
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <ikw:SimpleStackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                IsHitTestVisible="False"
+                Spacing="8">
+                <ikw:SimpleStackPanel.Style>
+                    <Style TargetType="ikw:SimpleStackPanel">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasMatches}" Value="False">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ikw:SimpleStackPanel.Style>
+                <ui:FontIcon
+                    HorizontalAlignment="Center"
+                    FontSize="28"
+                    Foreground="{DynamicResource {x:Static ui:ThemeKeys.TextFillColorSecondaryBrushKey}}"
+                    Icon="{x:Static ui:FluentSystemIcons.SearchInfo_24_Regular}" />
+                <TextBlock
+                    Foreground="{DynamicResource {x:Static ui:ThemeKeys.TextFillColorSecondaryBrushKey}}"
+                    Text="{DynamicResource NoBuiltInIconFound}" />
+            </ikw:SimpleStackPanel>
+        </Grid>
+    </Grid>
+</ui:ContentDialog>

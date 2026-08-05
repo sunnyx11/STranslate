@@ -279,7 +279,12 @@ public class ServiceManager
             return null;
 
         var iconsDirectory = Path.Combine(source.MetaData.PluginSettingsDirectoryPath, "icons");
-        var destinationPath = Path.Combine(iconsDirectory, $"{duplicateServiceId}{Path.GetExtension(source.IconPath)}");
+        var sourceFileName = Path.GetFileName(source.IconPath);
+        var sourcePrefix = $"{source.ServiceID}.";
+        var duplicateFileName = sourceFileName.StartsWith(sourcePrefix, StringComparison.OrdinalIgnoreCase)
+            ? $"{duplicateServiceId}.{sourceFileName[sourcePrefix.Length..]}"
+            : $"{duplicateServiceId}{Path.GetExtension(source.IconPath)}";
+        var destinationPath = Path.Combine(iconsDirectory, duplicateFileName);
 
         Directory.CreateDirectory(iconsDirectory);
         File.Copy(source.IconPath, destinationPath);

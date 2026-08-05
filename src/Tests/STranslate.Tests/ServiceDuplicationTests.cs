@@ -124,6 +124,33 @@ public class ServiceDuplicationTests
         }
     }
 
+    [Fact]
+    public void DuplicateService_BuiltInIcon_PreservesBuiltInIconKey()
+    {
+        var testDirectory = CreateTestDirectory();
+
+        try
+        {
+            var (manager, serviceSettings, source) = CreateSourceService(testDirectory);
+            var iconsDirectory = Path.GetDirectoryName(source.IconPath)!;
+            File.Delete(source.IconPath);
+            source.IconPath = Path.Combine(iconsDirectory, $"{source.ServiceID}.builtin.grok.png");
+            File.WriteAllBytes(source.IconPath, [0x10, 0x20, 0x30]);
+            Assert.Single(serviceSettings.TranSvcDatas).IconPath =
+                Helper.ToRelativeIconPath(source.IconPath, source.MetaData.PluginSettingsDirectoryPath);
+
+            var duplicate = manager.DuplicateService(source, ServiceType.Translation);
+
+            Assert.NotNull(duplicate);
+            Assert.Equal($"{duplicate.ServiceID}.builtin.grok.png", Path.GetFileName(duplicate.IconPath));
+            Assert.Equal(File.ReadAllBytes(source.IconPath), File.ReadAllBytes(duplicate.IconPath));
+        }
+        finally
+        {
+            Directory.Delete(testDirectory, recursive: true);
+        }
+    }
+
     private static (ServiceManager Manager, ServiceSettings Settings, Service Source) CreateSourceService(
         string testDirectory,
         ServiceType type = ServiceType.Translation)

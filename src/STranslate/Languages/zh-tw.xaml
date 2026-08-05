@@ -443,6 +443,11 @@
     <sys:String x:Key="Retry">重試</sys:String>
     <sys:String x:Key="Icon">圖標</sys:String>
     <sys:String x:Key="Duplicate">重複</sys:String>
+    <sys:String x:Key="Apply">套用</sys:String>
+    <sys:String x:Key="BuiltInIconLibrary">內建圖標庫...</sys:String>
+    <sys:String x:Key="SelectBuiltInIcon">選擇內建圖標</sys:String>
+    <sys:String x:Key="SearchBuiltInIcon">搜尋內建圖標</sys:String>
+    <sys:String x:Key="NoBuiltInIconFound">找不到符合的圖標</sys:String>
     <sys:String x:Key="ChangeIcon">更換圖標</sys:String>
     <sys:String x:Key="ResetIcon">重置圖標</sys:String>
     <sys:String x:Key="Official">官方</sys:String>

@@ -442,6 +442,11 @@
     <sys:String x:Key="Retry">Yeniden Dene</sys:String>
     <sys:String x:Key="Icon">Simge</sys:String>
     <sys:String x:Key="Duplicate">Çoğalt</sys:String>
+    <sys:String x:Key="Apply">Uygula</sys:String>
+    <sys:String x:Key="BuiltInIconLibrary">Yerleşik Simge Kitaplığı...</sys:String>
+    <sys:String x:Key="SelectBuiltInIcon">Yerleşik Simge Seç</sys:String>
+    <sys:String x:Key="SearchBuiltInIcon">Yerleşik simgelerde ara</sys:String>
+    <sys:String x:Key="NoBuiltInIconFound">Eşleşen simge bulunamadı</sys:String>
     <sys:String x:Key="ChangeIcon">Simgeyi Değiştir</sys:String>
     <sys:String x:Key="ResetIcon">Simgeyi Sıfırla</sys:String>
     <sys:String x:Key="Official">Resmi</sys:String>

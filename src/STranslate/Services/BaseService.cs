@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
+using System.Windows;
 
 namespace STranslate.Services;
 
@@ -123,6 +124,32 @@ public abstract partial class BaseService : ObservableObject, IDisposable
     }
 
     /// <summary>
+    /// Lets the user select an embedded icon and assigns a private copy to the service.
+    /// </summary>
+    public async Task<bool> SelectBuiltInIconAsync(Service service)
+    {
+        var dialog = new BuiltInServiceIconDialog(service);
+        if (await dialog.ShowAsync() != ContentDialogResult.Primary || dialog.SelectedIcon == null)
+            return false;
+
+        try
+        {
+            var resource = Application.GetResourceStream(dialog.SelectedIcon.ResourceUri)
+                ?? throw new FileNotFoundException("Built-in icon resource was not found.", dialog.SelectedIcon.ResourceFileName);
+
+            await using var resourceStream = resource.Stream;
+            var fileName = BuiltInServiceIconCatalog.BuildServiceFileName(service.ServiceID, dialog.SelectedIcon);
+            await ReplaceServiceIconAsync(service, fileName, resourceStream);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            await ShowIconChangeFailureAsync(ex);
+            return false;
+        }
+    }
+
+    /// <summary>
     /// 更换服务图标：将用户选择的图片拷贝到插件设置目录的 icons 子目录，并设置服务图标。
     /// </summary>
     public async Task<bool> ChangeIconAsync(Service service)
@@ -135,20 +162,67 @@ public abstract partial class BaseService : ObservableObject, IDisposable
         if (dialog.ShowDialog() != true)
             return false;
 
-        var sourcePath = dialog.FileName;
-        var iconsDir = Path.Combine(service.MetaData.PluginSettingsDirectoryPath, "icons");
-        Directory.CreateDirectory(iconsDir);
+        try
+        {
+            var sourcePath = dialog.FileName;
+            var fileName = $"{service.ServiceID}{Path.GetExtension(sourcePath)}";
+            await using var sourceStream = File.OpenRead(sourcePath);
+            await ReplaceServiceIconAsync(service, fileName, sourceStream);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            await ShowIconChangeFailureAsync(ex);
+            return false;
+        }
+    }
 
-        var destName = $"{service.ServiceID}{Path.GetExtension(sourcePath)}";
-        var destPath = Path.Combine(iconsDir, destName);
+    private static async Task ReplaceServiceIconAsync(Service service, string fileName, Stream content)
+    {
+        var iconsDirectory = Path.Combine(service.MetaData.PluginSettingsDirectoryPath, "icons");
+        Directory.CreateDirectory(iconsDirectory);
 
-        // 若已有旧图标文件（不同扩展名），先删除
-        foreach (var f in Directory.EnumerateFiles(iconsDir, $"{service.ServiceID}.*"))
-            Helper.TryDeleteFile(f);
+        var destinationPath = Path.Combine(iconsDirectory, fileName);
+        var temporaryPath = Path.Combine(iconsDirectory, $"{service.ServiceID}.{Guid.NewGuid():N}.tmp");
 
-        File.Copy(sourcePath, destPath, overwrite: true);
-        service.IconPath = destPath;  // setter 始终触发通知，UI 重新加载；同时落盘相对路径
-        return true;
+        try
+        {
+            await using (var temporaryStream = new FileStream(
+                temporaryPath,
+                FileMode.CreateNew,
+                FileAccess.Write,
+                FileShare.None,
+                bufferSize: 81920,
+                useAsync: true))
+            {
+                await content.CopyToAsync(temporaryStream);
+            }
+
+            File.Move(temporaryPath, destinationPath, overwrite: true);
+
+            foreach (var existingPath in Directory.EnumerateFiles(iconsDirectory, $"{service.ServiceID}.*"))
+            {
+                if (!existingPath.Equals(destinationPath, StringComparison.OrdinalIgnoreCase))
+                    Helper.TryDeleteFile(existingPath);
+            }
+
+            service.IconPath = destinationPath;
+        }
+        finally
+        {
+            Helper.TryDeleteFile(temporaryPath);
+        }
+    }
+
+    private async Task ShowIconChangeFailureAsync(Exception exception)
+    {
+        await new ContentDialog
+        {
+            Title = _i18n.GetTranslation("ChangeIcon"),
+            CloseButtonText = _i18n.GetTranslation("Ok"),
+            DefaultButton = ContentDialogButton.Close,
+            Content = $"{_i18n.GetTranslation("OperationFailed")}: {exception.Message}"
+        }.ShowAsync();
     }
 
     /// <summary>

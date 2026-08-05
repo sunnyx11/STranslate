@@ -78,6 +78,12 @@ public abstract partial class ServiceViewModelBase<T>(T service) : ObservableObj
     }
 
     [RelayCommand]
+    private async Task SelectBuiltInIcon(Service svc)
+    {
+        await Service.SelectBuiltInIconAsync(svc);
+    }
+
+    [RelayCommand]
     private async Task ChangeIcon(Service svc)
     {
         await Service.ChangeIconAsync(svc);

@@ -1,11 +1,59 @@
 using STranslate.Core;
 using STranslate.Converters;
 using STranslate.Plugin;
+using System.Collections;
+using System.Resources;
 
 namespace STranslate.Tests;
 
 public class ServiceIconTests
 {
+    [Fact]
+    public void BuiltInIconCatalog_HasUniqueKeysAndEmbeddedResources()
+    {
+        Assert.Equal(38, BuiltInServiceIconCatalog.Icons.Count);
+        Assert.Equal(
+            BuiltInServiceIconCatalog.Icons.Count,
+            BuiltInServiceIconCatalog.Icons.Select(icon => icon.Key).Distinct(StringComparer.OrdinalIgnoreCase).Count());
+
+        var resourceNames = GetWpfResourceNames();
+        foreach (var icon in BuiltInServiceIconCatalog.Icons)
+        {
+            var expectedName = $"resources/builtinserviceicons/{icon.ResourceFileName}".ToLowerInvariant();
+            Assert.Contains(expectedName, resourceNames);
+        }
+    }
+
+    [Fact]
+    public void BuiltInIconCatalog_BuildsAndRecognizesServiceFileName()
+    {
+        var icon = Assert.Single(BuiltInServiceIconCatalog.Icons, icon => icon.Key == "grok");
+        var service = new Service
+        {
+            ServiceID = "service-1",
+            MetaData = new PluginMetaData { IconPath = "/plugins/demo/icon.png" }
+        };
+
+        var fileName = BuiltInServiceIconCatalog.BuildServiceFileName(service.ServiceID, icon);
+        service.IconPath = Path.Combine("/settings/icons", fileName);
+
+        Assert.Equal("service-1.builtin.grok.png", fileName);
+        Assert.Same(icon, BuiltInServiceIconCatalog.GetSelectedIcon(service));
+    }
+
+    [Fact]
+    public void BuiltInIconCatalog_DoesNotTreatCustomIconAsBuiltIn()
+    {
+        var service = new Service
+        {
+            ServiceID = "service-1",
+            MetaData = new PluginMetaData { IconPath = "/plugins/demo/icon.png" },
+            IconPath = "/settings/icons/service-1.png"
+        };
+
+        Assert.Null(BuiltInServiceIconCatalog.GetSelectedIcon(service));
+    }
+
     [Fact]
     public void ServiceData_IconPath_DefaultsToNull()
     {
@@ -127,5 +175,16 @@ public class ServiceIconTests
             if (File.Exists(tempFile))
                 File.Delete(tempFile);
         }
+    }
+
+    private static HashSet<string> GetWpfResourceNames()
+    {
+        using var stream = typeof(App).Assembly.GetManifestResourceStream("STranslate.g.resources");
+        Assert.NotNull(stream);
+
+        using var reader = new ResourceReader(stream);
+        return reader.Cast<DictionaryEntry>()
+            .Select(entry => Assert.IsType<string>(entry.Key).ToLowerInvariant())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
     }
 }

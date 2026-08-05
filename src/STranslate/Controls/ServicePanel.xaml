@@ -55,6 +55,14 @@
                             <ui:FontIcon Icon="{x:Static ui:FluentSystemIcons.Image_20_Regular}" />
                         </MenuItem.Icon>
                         <MenuItem
+                            Command="{Binding Source={StaticResource VmProxy}, Path=Data.SelectBuiltInIconCommand}"
+                            CommandParameter="{Binding Source={StaticResource SvcProxy}, Path=Data}"
+                            Header="{DynamicResource BuiltInIconLibrary}">
+                            <MenuItem.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:FluentSystemIcons.ImageMultiple_20_Regular}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
                             Command="{Binding Source={StaticResource VmProxy}, Path=Data.ChangeIconCommand}"
                             CommandParameter="{Binding Source={StaticResource SvcProxy}, Path=Data}"
                             Header="{DynamicResource ChangeIcon}">
@@ -62,6 +70,7 @@
                                 <ui:FontIcon Icon="{x:Static ui:FluentSystemIcons.Image_20_Regular}" />
                             </MenuItem.Icon>
                         </MenuItem>
+                        <Separator />
                         <MenuItem
                             Command="{Binding Source={StaticResource VmProxy}, Path=Data.ResetIconCommand}"
                             CommandParameter="{Binding Source={StaticResource SvcProxy}, Path=Data}"
@@ -178,6 +187,14 @@
                             <ui:FontIcon Icon="{x:Static ui:FluentSystemIcons.Image_20_Regular}" />
                         </MenuItem.Icon>
                         <MenuItem
+                            Command="{Binding Source={StaticResource VmProxy}, Path=Data.SelectBuiltInIconCommand}"
+                            CommandParameter="{Binding Source={StaticResource SvcProxy}, Path=Data}"
+                            Header="{DynamicResource BuiltInIconLibrary}">
+                            <MenuItem.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:FluentSystemIcons.ImageMultiple_20_Regular}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
                             Command="{Binding Source={StaticResource VmProxy}, Path=Data.ChangeIconCommand}"
                             CommandParameter="{Binding Source={StaticResource SvcProxy}, Path=Data}"
                             Header="{DynamicResource ChangeIcon}">
@@ -185,6 +202,7 @@
                                 <ui:FontIcon Icon="{x:Static ui:FluentSystemIcons.Image_20_Regular}" />
                             </MenuItem.Icon>
                         </MenuItem>
+                        <Separator />
                         <MenuItem
                             Command="{Binding Source={StaticResource VmProxy}, Path=Data.ResetIconCommand}"
                             CommandParameter="{Binding Source={StaticResource SvcProxy}, Path=Data}"
@@ -335,6 +353,14 @@
                             <ui:FontIcon Icon="{x:Static ui:FluentSystemIcons.Image_20_Regular}" />
                         </MenuItem.Icon>
                         <MenuItem
+                            Command="{Binding Source={StaticResource VmProxy}, Path=Data.SelectBuiltInIconCommand}"
+                            CommandParameter="{Binding Source={StaticResource SvcProxy}, Path=Data}"
+                            Header="{DynamicResource BuiltInIconLibrary}">
+                            <MenuItem.Icon>
+                                <ui:FontIcon Icon="{x:Static ui:FluentSystemIcons.ImageMultiple_20_Regular}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
                             Command="{Binding Source={StaticResource VmProxy}, Path=Data.ChangeIconCommand}"
                             CommandParameter="{Binding Source={StaticResource SvcProxy}, Path=Data}"
                             Header="{DynamicResource ChangeIcon}">
@@ -342,6 +368,7 @@
                                 <ui:FontIcon Icon="{x:Static ui:FluentSystemIcons.Image_20_Regular}" />
                             </MenuItem.Icon>
                         </MenuItem>
+                        <Separator />
                         <MenuItem
                             Command="{Binding Source={StaticResource VmProxy}, Path=Data.ResetIconCommand}"
                             CommandParameter="{Binding Source={StaticResource SvcProxy}, Path=Data}"

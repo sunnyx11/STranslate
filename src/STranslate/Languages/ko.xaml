@@ -432,6 +432,11 @@
     <sys:String x:Key="Retry">재시도</sys:String>
     <sys:String x:Key="Icon">아이콘</sys:String>
     <sys:String x:Key="Duplicate">복제</sys:String>
+    <sys:String x:Key="Apply">적용</sys:String>
+    <sys:String x:Key="BuiltInIconLibrary">내장 아이콘 라이브러리...</sys:String>
+    <sys:String x:Key="SelectBuiltInIcon">내장 아이콘 선택</sys:String>
+    <sys:String x:Key="SearchBuiltInIcon">내장 아이콘 검색</sys:String>
+    <sys:String x:Key="NoBuiltInIconFound">일치하는 아이콘이 없습니다</sys:String>
     <sys:String x:Key="ChangeIcon">아이콘 변경</sys:String>
     <sys:String x:Key="ResetIcon">아이콘 초기화</sys:String>
     <sys:String x:Key="Official">공식</sys:String>
