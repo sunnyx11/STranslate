@@ -178,8 +178,9 @@ public partial class OcrWindowViewModel : ObservableObject, IDisposable
             if (Settings.CopyAfterOcr)
                 ClipboardHelper.SetText(_lastOcrResult.Text);
 
-            var hasBoxPoints = Utilities.HasBoxPoints(_lastOcrResult);
-            IsNoLocationInfoVisible = !hasBoxPoints && !_hasShownNoLocationInfoForSelectedEngine;
+            IsNoLocationInfoVisible =
+                ShouldShowNoLocationInfo(ocrSvc, _lastOcrResult) &&
+                !_hasShownNoLocationInfoForSelectedEngine;
             if (IsNoLocationInfoVisible)
             {
                 _hasShownNoLocationInfoForSelectedEngine = true;
@@ -533,6 +534,9 @@ public partial class OcrWindowViewModel : ObservableObject, IDisposable
     #endregion
 
     #region Private Methods
+
+    internal static bool ShouldShowNoLocationInfo(IOcrPlugin ocrPlugin, OcrResult ocrResult) =>
+        ocrPlugin.SupportBoxPoints() && !Utilities.HasBoxPoints(ocrResult);
 
     private void Clear()
     {
