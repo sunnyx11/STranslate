@@ -276,7 +276,10 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         UpdateCaret();
     }
 
-    [RelayCommand(IncludeCancelCommand = true, CanExecute = nameof(CanTranslate))]
+    [RelayCommand(
+        IncludeCancelCommand = true,
+        AllowConcurrentExecutions = true,
+        CanExecute = nameof(CanTranslate))]
     private async Task TranslateAsync(object? force, CancellationToken cancellationToken)
     {
         try

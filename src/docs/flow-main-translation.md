@@ -35,7 +35,7 @@
    - 若 `Settings.AutoTranslate == false` 直接返回。
    - 空文本时取消防抖任务。
    - 非空时通过 `DebounceExecutor` 按 `Settings.AutoTranslateDelayMs` 延迟执行 `TranslateCommand`。
-2. `TranslateAsync()` 执行前先取消防抖队列，创建 `TranslationOperation` 并重置已启用服务的结果对象。
+2. `TranslateAsync()` 允许新请求在旧请求退出期间立即执行；命令框架会取消旧请求，随后创建 `TranslationOperation` 并重置已启用服务的结果对象。
    - `TranslationOperation` 快照输入文本、源/目标语种和取消令牌，内部持有递增操作标识。
    - 插件只写入本次请求独占的临时结果；主翻译、回译和词典结果仅在当前操作仍有效时发布到界面。
    - 被后续请求替代的旧任务仍可完成取消和资源清理，但不得覆盖新结果、触发自动复制或写入历史。
@@ -133,8 +133,9 @@ if (!result.IsSuccess || !operation.IsCurrent(plugin.TransResult))
 4. `TranslationOperation` 会在插件返回后重新检查取消令牌；调用方仍须检查执行结果和 `operation.IsCurrent(...)`，再执行复制、历史、最近文本等非界面副作用。
 5. 自动请求的复制和历史入口还需检查 `operation.IsLatestAutomatic`；可见状态发布使用操作对象提供的发布方法。
 6. 深层编排可以使用 `ThrowIfCancellationRequested()` 快速终止流程；自动翻译命令入口必须仅捕获自身令牌触发的 `OperationCanceledException`，把用户取消作为正常控制流，不能让取消异常越过 `AsyncRelayCommand` 边界。
-7. 不使用 `AsyncLocal`、静态“当前请求”或实时 `InputText` 隐式传递上下文，避免调用链变得不可追踪。
-8. 增加并发回归测试，至少覆盖旧请求在新请求完成后才进入流式回调、`catch` 或 `finally` 的情况。
+7. 自动翻译命令必须启用 `AllowConcurrentExecutions`，确保旧请求响应取消期间，键盘和按钮触发的新请求仍可进入执行；结果隔离继续由 `TranslationResultCoordinator` 负责。
+8. 不使用 `AsyncLocal`、静态“当前请求”或实时 `InputText` 隐式传递上下文，避免调用链变得不可追踪。
+9. 增加并发回归测试，至少覆盖旧请求在新请求完成后才进入流式回调、`catch` 或 `finally` 的情况。
 
 ## 错误处理与通知策略
 
