@@ -113,6 +113,17 @@ public class OpenAIProtocolTests
         Assert.Null(streamEvent.ErrorMessage);
     }
 
+    [Fact]
+    public void ParseStreamLine_IgnoresUsageChunkWithEmptyChoices()
+    {
+        const string line = "data: {\"choices\":[],\"usage\":{\"prompt_tokens\":46,\"completion_tokens\":7,\"total_tokens\":53}}";
+
+        var streamEvent = OpenAIProtocol.ParseStreamLine(OpenAIApiMode.ChatCompletions, line);
+
+        Assert.Null(streamEvent.TextDelta);
+        Assert.Null(streamEvent.ErrorMessage);
+    }
+
     [Theory]
     [InlineData("event: response.created")]
     [InlineData("data: [DONE]")]

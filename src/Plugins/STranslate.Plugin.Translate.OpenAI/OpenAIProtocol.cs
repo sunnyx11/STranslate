@@ -63,8 +63,8 @@ internal static class OpenAIProtocol
         {
             OpenAIApiMode.Responses when parsedData["type"]?.ToString() == "response.output_text.delta"
                 => parsedData["delta"]?.ToString(),
-            OpenAIApiMode.ChatCompletions
-                => parsedData["choices"]?[0]?["delta"]?["content"]?.ToString(),
+            OpenAIApiMode.ChatCompletions when parsedData["choices"] is JsonArray { Count: > 0 } choices
+                => choices[0]?["delta"]?["content"]?.ToString(),
             _ => null
         };
 
